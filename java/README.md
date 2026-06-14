@@ -15,7 +15,7 @@ This repository is a lightweight, flat-directory Java testing environment using 
 
 ## Dependency Setup
 
-This architecture supports two dependency setups. Choose the one that fits your needs. Execute the commands in a PowerShell terminal at the root of the `week1` folder.
+This architecture supports two dependency setups. Choose the one that fits your needs. Execute the commands in a PowerShell terminal at the root of the `java` folder.
 
 ### Primary Approach: Modular JARs (Recommended)
 
@@ -86,7 +86,7 @@ public static void main(String[] args) {
 
 ### 3. Direct Terminal Commands
 
-You can bypass the IDE entirely and execute tests via the command line. Ensure you run these from the root of the `week1` directory.
+You can bypass the IDE entirely and execute tests via the command line. Ensure you run these from the root of the `java` directory.
 
 _Note: Use the exact class name for flat files, or the fully qualified class name (e.g., `calculator.CalculatorTest`) for packaged files._
 
