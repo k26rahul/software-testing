@@ -1,62 +1,79 @@
 # JUnit 5 & 4 Testing Sandbox (No Build Tool)
 
-This repository is a lightweight, flat-directory Java testing environment using JUnit 5 (Jupiter) and JUnit 4 (Vintage). It explicitly bypasses standard build tools (Maven/Gradle) and complex enterprise directory structures to provide a fast, isolated sandbox for learning and testing software logic.
+This repository is a lightweight, flat-directory Java testing environment using JUnit 5 (Jupiter) and JUnit 4 (Vintage). It explicitly bypasses standard build tools (Maven/Gradle) to provide a fast, isolated sandbox for learning and testing software logic.
 
 ## Directory Architecture
 
 - **`src/`**: Contains all raw Java source code (`.java`), including application logic and test classes.
 - **`src/util/`**: Contains `TestHarness.java`, the custom execution engine that powers the self-executing tests.
-- **Packages (Subfolders)**: If you organize files into subfolders inside `src/` (e.g., `src/calculator/`), you must include the corresponding package declaration (e.g., `package calculator;`) at the top of those `.java` files.
-- **`bin/`**: The output directory for compiled bytecode (`.class`). VS Code automatically handles compilation and routes files here.
-- **`lib/`**: Stores external dependencies. It strictly contains the JUnit 5 Standalone Console `.jar` file.
-- **`.vscode/`**: Contains `settings.json` configuration that binds the `src`, `bin`, and `lib` paths to the IDE's underlying Java engine.
+- **Packages (Subfolders)**: If you organize files into subfolders inside `src/` (e.g., `src/calculator/`), include the corresponding package declaration (`package calculator;`) at the top of those `.java` files.
+- **`bin/`**: Output directory for compiled bytecode (`.class`). VS Code automatically handles compilation and routes files here.
+- **`lib/`**: Stores external dependency `.jar` files.
+- **`.vscode/`**: Contains `settings.json` configuration binding `src`, `bin`, and `lib` to the IDE's language server.
+
+---
 
 ## Dependency Setup
 
-If the JUnit executable is ever accidentally deleted, open Windows PowerShell at the root of the `week1` folder and execute the following command to restore it to the `lib` directory:
+This architecture supports two dependency setups. Choose the one that fits your needs. Execute the commands in a PowerShell terminal at the root of the `week1` folder.
+
+### Primary Approach: Modular JARs (Recommended)
+
+Downloads the individual, decoupled JUnit modular libraries.
+
+- **Pros:** Full functionality. Terminal execution, custom test harness, and the VS Code Test Runner extension (visual play buttons) will work flawlessly for **both** JUnit 4 and JUnit 5.
+
+```powershell
+$baseUrl = "https://repo1.maven.org/maven2"
+
+# JUnit 5 (Jupiter) Core & Execution Engine
+Invoke-WebRequest -Uri "$baseUrl/org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2.jar" -OutFile "lib\junit-jupiter-api.jar"
+Invoke-WebRequest -Uri "$baseUrl/org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar" -OutFile "lib\junit-jupiter-engine.jar"
+Invoke-WebRequest -Uri "$baseUrl/org/junit/platform/junit-platform-commons/1.10.2/junit-platform-commons-1.10.2.jar" -OutFile "lib\junit-platform-commons.jar"
+Invoke-WebRequest -Uri "$baseUrl/org/junit/platform/junit-platform-engine/1.10.2/junit-platform-engine-1.10.2.jar" -OutFile "lib\junit-platform-engine.jar"
+Invoke-WebRequest -Uri "$baseUrl/org/junit/platform/junit-platform-launcher/1.10.2/junit-platform-launcher-1.10.2.jar" -OutFile "lib\junit-platform-launcher.jar"
+Invoke-WebRequest -Uri "$baseUrl/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar" -OutFile "lib\apiguardian-api.jar"
+Invoke-WebRequest -Uri "$baseUrl/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar" -OutFile "lib\opentest4j.jar"
+
+# JUnit 4 (Vintage) Bridge & Legacy APIs
+Invoke-WebRequest -Uri "$baseUrl/org/junit/vintage/junit-vintage-engine/5.10.2/junit-vintage-engine-5.10.2.jar" -OutFile "lib\junit-vintage-engine.jar"
+Invoke-WebRequest -Uri "$baseUrl/junit/junit/4.13.2/junit-4.13.2.jar" -OutFile "lib\junit-4.13.2.jar"
+Invoke-WebRequest -Uri "$baseUrl/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar" -OutFile "lib\hamcrest-core.jar"
+
+```
+
+_(Note: After downloading, run `Java: Clean Workspace` from the VS Code Command Palette to refresh the IDE)._
+
+### Alternative Approach: Standalone "Fat" JAR
+
+Downloads a single, monolithic file containing the entire testing platform.
+
+- **Pros:** Single file download. Terminal execution and the custom test harness work for both versions.
+- **Cons:** The VS Code Test Runner extension (visual play buttons) will **only** work for legacy JUnit 4 files, not JUnit 5.
 
 ```powershell
 Invoke-WebRequest -Uri "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.10.2/junit-platform-console-standalone-1.10.2.jar" -OutFile "lib\junit.jar"
 
 ```
 
+---
+
 ## Test Execution Methods
 
-This architecture supports three distinct methods for executing tests.
+### 1. VS Code Native Runner (Visual Play Buttons)
 
-### Approach 1: Terminal Command (JUnit 4 & 5)
+If you are using the **Primary (Modular)** setup, VS Code's Java extension will natively parse both `@org.junit.jupiter.api.Test` (v5) and `@org.junit.Test` (v4).
 
-You can invoke the JUnit execution engine directly via the command line.
+- Open any test class.
+- Click the **Run Test** green play icon next to the line numbers.
+- View test results directly in the VS Code sidebar.
 
-Execute this command from the root of the `week1` directory.
+### 2. Self-Executing Tests (IDE execution without terminal)
 
-- **For flat files:** Use the exact class name.
+This approach utilizes the custom `util.TestHarness` facade, allowing test classes to execute themselves directly via a standard `main` method. Works for both JUnit 4 and 5, under both dependency setups.
 
-```powershell
-java -jar lib\junit.jar execute -cp "bin" -c CalculatorTest
-
-```
-
-- **For packaged files (subfolders):** Use the fully qualified class name (package + class).
-
-```powershell
-java -jar lib\junit.jar execute -cp "bin" -c calculator.CalculatorTest
-
-```
-
-### Approach 2: Self-Executing Tests (JUnit 4 & 5)
-
-This approach utilizes a custom Facade pattern, allowing each test class to execute itself directly via the VS Code "Run" button, completely avoiding the terminal.
-
-1. Open your target test class file (e.g., `CalculatorTest.java`).
-2. Import the custom test engine at the top of the file:
-
-```java
-import util.TestHarness;
-
-```
-
-3. Include a standard `main` method that passes the current class to the harness:
+1. Import the engine: `import util.TestHarness;`
+2. Add a main method passing the target class:
 
 ```java
 public static void main(String[] args) {
@@ -65,16 +82,26 @@ public static void main(String[] args) {
 
 ```
 
-4. Click the visual **Run** button hovering directly over the `main` method in your editor.
+3. Click the visual **Run** button hovering over the `main` method. The test output will print cleanly to the IDE terminal.
 
-**Note on Architecture:** The complex JUnit Platform Launcher API logic is fully encapsulated inside `src/util/TestHarness.java`. This file acts as the central execution engine. It generates concise, inline terminal output for passed/failed tests and requires zero manual modification.
+### 3. Direct Terminal Commands
 
-### Approach 3: VS Code Native Runner (JUnit 4 Only)
+You can bypass the IDE entirely and execute tests via the command line. Ensure you run these from the root of the `week1` directory.
 
-Because the downloaded standalone `.jar` includes the JUnit Vintage engine, this architecture fully supports legacy JUnit 4 tests out of the box. If you write a test using the older JUnit 4 annotations (e.g., `import org.junit.Test;`), you can bypass the terminal and the custom harness entirely.
+_Note: Use the exact class name for flat files, or the fully qualified class name (e.g., `calculator.CalculatorTest`) for packaged files._
 
-1. Open your JUnit 4 test class file.
-2. Click the visual **Run Test** (green play button) that automatically appears next to the line numbers in the editor.
-3. View the test execution status via the checkmarks in the editor and the VS Code Test Explorer sidebar.
+**If using the Primary Setup (Modular JARs):**
+Because there is no standalone runner, you execute the self-executing `main` method while specifying the `lib` folder in the classpath.
 
-**Note on Packages:** This native runner requires zero manual configuration for packages. The IDE's language server automatically parses subfolders, resolves the namespaces, and displays the execution buttons.
+```powershell
+java -cp "bin;lib\*" calculator.CalculatorTest
+
+```
+
+**If using the Alternative Setup (Standalone JAR):**
+You invoke the standalone console runner built into the `junit.jar` file.
+
+```powershell
+java -jar lib\junit.jar execute -cp "bin" -c calculator.CalculatorTest
+
+```
