@@ -4,7 +4,8 @@ This repository is a lightweight, flat-directory Java testing environment using 
 
 ## Directory Architecture
 
-- **`src/`**: Contains all raw Java source code (`.java`), including application logic, test classes, and custom test harness files.
+- **`src/`**: Contains all raw Java source code (`.java`), including application logic and test classes.
+- **`src/util/`**: Contains `TestHarness.java`, the custom execution engine that powers the self-executing tests.
 - **Packages (Subfolders)**: If you organize files into subfolders inside `src/` (e.g., `src/calculator/`), you must include the corresponding package declaration (e.g., `package calculator;`) at the top of those `.java` files.
 - **`bin/`**: The output directory for compiled bytecode (`.class`). VS Code automatically handles compilation and routes files here.
 - **`lib/`**: Stores external dependencies. It strictly contains the JUnit 5 Standalone Console `.jar` file.
@@ -43,22 +44,30 @@ java -jar lib\junit.jar execute -cp "bin" -c calculator.CalculatorTest
 
 ```
 
-### Approach 2: Visual Test Harness (JUnit 4 & 5)
+### Approach 2: Self-Executing Tests (JUnit 4 & 5)
 
-This approach utilizes a custom Facade pattern to run tests via the VS Code "Run" button, avoiding the terminal entirely.
+This approach utilizes a custom Facade pattern, allowing each test class to execute itself directly via the VS Code "Run" button, completely avoiding the terminal.
 
-1. Open `src/TestHarness.java`.
-2. If your test class is inside a package, add the corresponding import statement at the top of the file (e.g., `import calculator.CalculatorTest;`).
-3. Edit the single execution line to target your desired test class:
+1. Open your target test class file (e.g., `CalculatorTest.java`).
+2. Import the custom test engine at the top of the file:
 
 ```java
-TestRunnerHelper.run(CalculatorTest.class);
+import util.TestHarness;
 
 ```
 
-4. Click the **Run** button hovering over the `main` method.
+3. Include a standard `main` method that passes the current class to the harness:
 
-**Note on Architecture:** The complex JUnit Platform Launcher API logic is fully encapsulated inside `src/TestRunnerHelper.java`. This helper file acts as the underlying execution engine. It generates concise, inline terminal output for passed/failed tests and requires zero manual modification.
+```java
+public static void main(String[] args) {
+    TestHarness.run(CalculatorTest.class);
+}
+
+```
+
+4. Click the visual **Run** button hovering directly over the `main` method in your editor.
+
+**Note on Architecture:** The complex JUnit Platform Launcher API logic is fully encapsulated inside `src/util/TestHarness.java`. This file acts as the central execution engine. It generates concise, inline terminal output for passed/failed tests and requires zero manual modification.
 
 ### Approach 3: VS Code Native Runner (JUnit 4 Only)
 
