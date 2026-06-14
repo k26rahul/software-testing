@@ -22,12 +22,14 @@ public class TestHarness {
       public void executionFinished(TestIdentifier testIdentifier,
           TestExecutionResult testExecutionResult) {
         if (testIdentifier.isTest()) {
-          System.out.println(" -> " + testIdentifier.getDisplayName() + " ["
-              + testExecutionResult.getStatus() + "]");
+          boolean passed = testExecutionResult.getStatus() == TestExecutionResult.Status.SUCCESSFUL;
+          // ANSI color codes are pure ASCII bytes - no encoding issues on any terminal.
+          String label = passed ? "\033[32m[PASS]\033[0m" : "\033[31m[FAIL]\033[0m";
+          System.out.println(label + " " + testIdentifier.getDisplayName());
 
-          if (testExecutionResult.getStatus() == TestExecutionResult.Status.FAILED) {
+          if (!passed) {
             testExecutionResult.getThrowable().ifPresent(throwable -> {
-              System.out.println("      Reason: " + throwable.getMessage());
+              System.out.println("       Reason: " + throwable.getMessage());
             });
           }
         }
