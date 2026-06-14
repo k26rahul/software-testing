@@ -5,6 +5,7 @@ This repository is a lightweight, flat-directory Java testing environment using 
 ## Directory Architecture
 
 - **`src/`**: Contains all raw Java source code (`.java`), including application logic, test classes, and custom test harness files.
+- **Packages (Subfolders)**: If you organize files into subfolders inside `src/` (e.g., `src/calculator/`), you must include the corresponding package declaration (e.g., `package calculator;`) at the top of those `.java` files.
 - **`bin/`**: The output directory for compiled bytecode (`.class`). VS Code automatically handles compilation and routes files here.
 - **`lib/`**: Stores external dependencies. It strictly contains the JUnit 5 Standalone Console `.jar` file.
 - **`.vscode/`**: Contains `settings.json` configuration that binds the `src`, `bin`, and `lib` paths to the IDE's underlying Java engine.
@@ -24,12 +25,21 @@ This architecture supports three distinct methods for executing tests.
 
 ### Approach 1: Terminal Command (JUnit 4 & 5)
 
-You can invoke the JUnit execution engine directly via the command line. To test a different file, simply replace `CalculatorTest` with your target class name.
+You can invoke the JUnit execution engine directly via the command line.
 
-Execute this command from the root of the `week1` directory:
+Execute this command from the root of the `week1` directory.
+
+- **For flat files:** Use the exact class name.
 
 ```powershell
 java -jar lib\junit.jar execute -cp "bin" -c CalculatorTest
+
+```
+
+- **For packaged files (subfolders):** Use the fully qualified class name (package + class).
+
+```powershell
+java -jar lib\junit.jar execute -cp "bin" -c calculator.CalculatorTest
 
 ```
 
@@ -38,14 +48,15 @@ java -jar lib\junit.jar execute -cp "bin" -c CalculatorTest
 This approach utilizes a custom Facade pattern to run tests via the VS Code "Run" button, avoiding the terminal entirely.
 
 1. Open `src/TestHarness.java`.
-2. Edit the single execution line to target your desired test class:
+2. If your test class is inside a package, add the corresponding import statement at the top of the file (e.g., `import calculator.CalculatorTest;`).
+3. Edit the single execution line to target your desired test class:
 
 ```java
 TestRunnerHelper.run(CalculatorTest.class);
 
 ```
 
-3. Click the **Run** button hovering over the `main` method.
+4. Click the **Run** button hovering over the `main` method.
 
 **Note on Architecture:** The complex JUnit Platform Launcher API logic is fully encapsulated inside `src/TestRunnerHelper.java`. This helper file acts as the underlying execution engine. It generates concise, inline terminal output for passed/failed tests and requires zero manual modification.
 
@@ -56,3 +67,5 @@ Because the downloaded standalone `.jar` includes the JUnit Vintage engine, this
 1. Open your JUnit 4 test class file.
 2. Click the visual **Run Test** (green play button) that automatically appears next to the line numbers in the editor.
 3. View the test execution status via the checkmarks in the editor and the VS Code Test Explorer sidebar.
+
+**Note on Packages:** This native runner requires zero manual configuration for packages. The IDE's language server automatically parses subfolders, resolves the namespaces, and displays the execution buttons.
