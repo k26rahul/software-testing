@@ -50,4 +50,12 @@ public class FileOrganizerCore {
     }
     return movedAny;
   }
+
+  public static void main(String[] args) {
+    FileOrganizerCore core = new FileOrganizerCore();
+    System.out.println("sample.pdf -> " + core.getCategory("sample.pdf"));
+    System.out.println("photo.png -> " + core.getCategory("photo.png"));
+    System.out.println("movie.mp4 -> " + core.getCategory("movie.mp4"));
+    System.out.println("unknown.xyz -> " + core.getCategory("unknown.xyz"));
+  }
 }

@@ -17,4 +17,10 @@ public class MetricsCore {
     return String.format("{\"processors\": %d, \"memory_total_mb\": %d, \"memory_used_mb\": %d}",
         processors, totalMemory, usedMemory);
   }
+
+  public static void main(String[] args) {
+    MetricsCore metrics = new MetricsCore();
+    System.out.println("Health Status: " + metrics.getHealthStatus());
+    System.out.println("System Metrics: " + metrics.getSystemMetrics());
+  }
 }
