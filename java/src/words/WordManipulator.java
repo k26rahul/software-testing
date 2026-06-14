@@ -43,4 +43,13 @@ public class WordManipulator {
     Arrays.sort(w2);
     return Arrays.equals(w1, w2);
   }
+
+  public static void main(String[] args) {
+    WordManipulator manipulator = new WordManipulator("listen");
+    System.out.println("Word: " + manipulator.word);
+    System.out.println("Reverse: " + manipulator.reverse());
+    System.out.println("Is palindrome? " + manipulator.isPalindrome());
+    System.out.println("Vowel count: " + manipulator.countVowels());
+    System.out.println("Is anagram of 'silent'? " + manipulator.isAnagram("silent"));
+  }
 }
