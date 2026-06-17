@@ -1,10 +1,10 @@
 # Bank Account
 
-A beginner Java application demonstrating a simple bank account system, paired with a comprehensive JUnit 5 test suite that covers all common test decorators.
+A Java bank account application paired with a JUnit 5 test suite demonstrating all common test decorators.
 
-## Application - `BankAccount.java`
+## `BankAccount.java`
 
-The `BankAccount` class models a basic bank account with the following operations:
+The constructor validates the account holder name, account number, and initial balance. Every operation records an entry in the transaction history.
 
 | Method | Description |
 |---|---|
@@ -16,11 +16,7 @@ The `BankAccount` class models a basic bank account with the following operation
 | `unfreeze()` | Restores normal account access |
 | `getTransactionHistory()` | Returns an unmodifiable log of all operations |
 
-Every operation records an entry in the transaction history. The constructor validates the account holder name, account number, and initial balance.
-
-## Tests - `BankAccountTest.java`
-
-The test file demonstrates every common JUnit 5 decorator:
+## `BankAccountTest.java`
 
 | Decorator | Usage |
 |---|---|
@@ -35,7 +31,7 @@ The test file demonstrates every common JUnit 5 decorator:
 | `@Disabled` | Marks a compound interest test as skipped - pending future implementation |
 | `@Tag` | Tags the end-to-end smoke test with `"smoke"` for selective test runs |
 
-## Test Coverage
+### Coverage
 
 - **Construction** - valid creation, blank holder name, negative initial balance
 - **Deposit** - balance increase, history recording, non-positive amount rejection

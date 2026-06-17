@@ -4,13 +4,20 @@ A simple Java Swing GUI application that recursively scans a target directory an
 
 ## How to Use
 
-1. Execute the `main` method inside `FileCategorizerApp.java`.
-2. Enter the absolute path of your target directory into the text field.
-3. Click **Categorize Files** to view the summary of counts and relative file paths.
+Run `FileCategorizerApp.java`, enter an absolute directory path, and click **Categorize Files**.
 
-## Architecture & Files
+## Files
 
-- `FileCategorizerCore.java`: Handles extension categorization and recursive directory traversal.
-- `FileCategorizerApp.java`: GUI layer displaying the categorized file listing.
-- `FileCategorizerCoreTest.java`: Unit tests for traversal and categorization logic.
-- `FileCategorizerAppSystemTest.java`: End-to-end system tests verifying the UI integration and outputs.
+- **`FileCategorizerCore.java`**
+  - `getCategory(String)` - returns the category (`Documents`, `Images`, `Videos`, `Others`) for a given filename based on extension
+  - `categorizeDirectory(Path)` - recursively walks a directory and returns a map of category to list of relative file paths; throws `IllegalArgumentException` if the path is invalid
+  - `generateSummary(Map)` - formats the categorized map into a printable summary string
+
+- **`FileCategorizerApp.java`**
+  - `FileCategorizerApp()` - constructor, initializes `FileCategorizerCore` and builds the Swing UI
+  - `main(String[])` - entry point, launches the window on the EDT via `SwingUtilities.invokeLater`
+
+- **`FileCategorizerCoreTest.java`**: JUnit 5 unit tests for traversal and categorization logic.
+
+- **`FileCategorizerAppSystemTest.java`**: End-to-end system tests verifying UI integration and outputs.
+
