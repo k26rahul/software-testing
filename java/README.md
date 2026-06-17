@@ -88,8 +88,6 @@ public static void main(String[] args) {
 
 You can bypass the IDE entirely and execute tests via the command line. Ensure you run these from the root of the `java` directory.
 
-_Note: Use the exact class name for flat files, or the fully qualified class name (e.g., `calculator.CalculatorTest`) for packaged files._
-
 **If using the Primary Setup (Modular JARs):**
 Because there is no standalone runner, you execute the self-executing `main` method while specifying the `lib` folder in the classpath.
 
@@ -105,3 +103,5 @@ You invoke the standalone console runner built into the `junit.jar` file.
 java -jar lib\junit.jar execute -cp "bin" -c calculator.CalculatorTest
 
 ```
+
+_Note: Use the exact class name for flat files, or the fully qualified class name (e.g., `calculator.CalculatorTest`) for packaged files._
