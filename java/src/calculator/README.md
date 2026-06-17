@@ -1,8 +1,14 @@
-# Calculator Application
+# Calculator
 
-A simple Java class that performs basic arithmetic operations (addition, subtraction, multiplication, and division) and handles error conditions such as division by zero.
+A Java class with methods for basic arithmetic operations.
 
-## Architecture & Files
+## Files
 
-- **`Calculator.java`**: The core component containing the arithmetic logic (addition, subtraction, multiplication, and division).
-- **`CalculatorTest.java`**: The unit test suite using JUnit 5. It validates calculation logic and exception handling. Runs natively via the VS Code "Run" button using the `util.TestHarness`.
+- **`Calculator.java`**
+  - `add(int, int)` - returns the sum of two integers
+  - `subtract(int, int)` - returns the difference of two integers
+  - `multiply(int, int)` - returns the product of two integers
+  - `divide(int, int)` - returns the quotient as a double; throws `IllegalArgumentException` on division by zero
+  - `main(String[])` - entry point, prints sample calculations to stdout
+
+- **`CalculatorTest.java`**: JUnit 5 unit tests for arithmetic logic and exception handling.
